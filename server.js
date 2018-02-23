@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
 const config = require('./config');
-const apiRouter = require('./routes/')
+const apiRouter = require('./routes/apiRouter')
 const db = config.DB[process.env.NODE_ENV] || process.env.DB;
 mongoose.Promise = Promise;
 
