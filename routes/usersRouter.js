@@ -7,4 +7,3 @@ router.get('/:username', getUser);
 router.get('/:username/repos', getUserRepo);
 
 module.exports = router;
-
