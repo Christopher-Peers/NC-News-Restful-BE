@@ -33,7 +33,7 @@ function getArticleComments(req, res, next) {
 
   return Comments.find({ belongs_to: req.params.article_id }).lean()
     .then(commentsForArticle => {
-      res.status(200).json({ commentsForArticle })
+      res.status(200).json({ comments : commentsForArticle })
     })
     .catch(next)
 }
@@ -59,6 +59,7 @@ function changeArticleVote(req, res, next) {
   
   const articleId = req.params.article_id
   let modifier;
+
   if (req.query.vote === 'up') modifier = 1;
   else if (req.query.vote === 'down') modifier = -1;
   // else // create an error to pass to error handling middleware once written
