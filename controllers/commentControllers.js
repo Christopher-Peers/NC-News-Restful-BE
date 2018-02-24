@@ -19,6 +19,20 @@ function changeCommentVote(req, res, next) {
 
 function deleteUserComment(req, res, next) {
   console.log('deleteUserComment called')
+
+  const commentId = req.params.comment_id;
+  Comments.findById(commentId).lean()
+    .then(comment => {
+      if (comment.created_by === 'northcoder') {
+        Comments.findByIdAndRemove(commentId)
+          .then(deletedComment => {
+            res.status(204) // No content - successfully processed but no return content
+          })
+          .catch(next)
+      }
+      else console.log('other author') // create an invalid user to delete comment
+    })
+
 }
 
 module.exports = { changeCommentVote, deleteUserComment }
