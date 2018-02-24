@@ -56,6 +56,18 @@ function postNewArticleComment(req, res, next) {
 
 function changeArticleVote(req, res, next) {
   console.log('changeArticleVote called')
+  
+  const articleId = req.params.article_id
+  let modifier;
+  if (req.query.vote === 'up') modifier = 1;
+  else if (req.query.vote === 'down') modifier = -1;
+  // else // create an error to pass to error handling middleware once written
+
+  return Articles.findByIdAndUpdate(articleId, { $inc: {votes : modifier} }, { new: true })
+    .then(updatedArticleVotes => {      
+      res.status(200).json(updatedArticleVotes) // better status code?
+    })
+    .catch(next)
 
 }
 
