@@ -1,8 +1,13 @@
+const mongoose = require('mongoose');
+
 const Articles = require('../models/articles');
 const Comments = require('../models/comments');
 
+const { checkVotesError, checkPostCommentError, checkIdError } = require('./helpers'); 
+
+// =========================================================
+
 function getAllArticles(req, res, next) {
-  console.log('getAllArticles called');
 
   let articlesArray = []
 
@@ -29,46 +34,63 @@ function getAllArticles(req, res, next) {
 }
 
 function getArticleComments(req, res, next) {
-  console.log('getArticleComments called');
 
-  return Comments.find({ belongs_to: req.params.article_id }).lean()
+  const articleId = req.params.article_id;
+
+  return Comments.find({ belongs_to: articleId }).lean()
     .then(commentsForArticle => {
-      res.status(200).json({ comments : commentsForArticle })
+      console.log(commentsForArticle)
+
+      let idErrorCheck =  checkIdError(articleId, commentsForArticle);
+      if (idErrorCheck !== undefined) return next(idErrorCheck);
+
+      if (commentsForArticle.length > 1) 
+      res.status(200).json({ comments: commentsForArticle })
     })
     .catch(next)
+
 }
 
 function postNewArticleComment(req, res, next) {
-  console.log('postNewArticleComment called');
 
-  const newComment = new Comments ({
-    body: req.body.text,
+  const newComment = new Comments({
+    body: req.body.comment,
     belongs_to: req.params.article_id,
     created_by: 'northcoder', // hardcoded fix this to accept a user
     votes: 0,
     created_at: Date.now()
   })
 
+  let postErrorCheck = checkPostCommentError(newComment); // still hardcoded for now
+  if (postErrorCheck !== undefined) return next(postErrorCheck)
+
   return newComment.save()
-  .then(newComment => { res.status(201).json(newComment) })
-  .catch(next);
+    .then(newComment => { res.status(201).json(newComment) })
+    .catch(next);
 }
 
 function changeArticleVote(req, res, next) {
-  console.log('changeArticleVote called')
-  
-  const articleId = req.params.article_id
+
+  const articleId = req.params.article_id;
+  const voteDirection = req.query.vote;
   let modifier;
 
-  if (req.query.vote === 'up') modifier = 1;
-  else if (req.query.vote === 'down') modifier = -1;
-  // else // create an error to pass to error handling middleware once written
+  let voteErrorCheck = checkVotesError(req.query);
+  if (voteErrorCheck !== undefined) return next(voteErrorCheck);
 
-  return Articles.findByIdAndUpdate(articleId, { $inc: {votes : modifier} }, { new: true })
-    .then(updatedArticleVotes => {      
+  if (voteDirection === 'up') modifier = 1;
+  else if (voteDirection === 'down') modifier = -1;
+
+  return Articles.findByIdAndUpdate(articleId, { $inc: { votes: modifier } }, { new: true })
+    .then(updatedArticleVotes => {
+
+      let idErrorCheck = checkIdError(articleId, updatedArticleVotes);
+      if (idErrorCheck !== undefined) return next(idErrorCheck);
+      
       res.status(200).json(updatedArticleVotes) // better status code?
     })
-    .catch(next)
+    .catch(err => console.log(err))
+    
 
 }
 

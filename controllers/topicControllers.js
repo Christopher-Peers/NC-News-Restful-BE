@@ -2,7 +2,6 @@ const Articles = require('../models/articles');
 const Topics = require('../models/topics');
 
 function getAllTopics(req, res, next) {
-  console.log('getAllTopics called')
 
   return Topics.find().lean()
     .then(allTopics => {
@@ -13,11 +12,13 @@ function getAllTopics(req, res, next) {
 }
 
 function getArticlesByTopic(req, res, next) {
-  console.log('getArticlesByTopic called')
+  
   const topicToSearchFor = req.params.topic;
 
   return Articles.find({ belongs_to: topicToSearchFor }).lean()
     .then(articlesByTopic => {
+      if (articlesByTopic.length < 1) return next({ name: 'invalidTopic', value: topicToSearchFor });
+      
       res.status(200).json({ articles: articlesByTopic})
     })
     .catch(next)

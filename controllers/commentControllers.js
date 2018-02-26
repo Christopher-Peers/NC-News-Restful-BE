@@ -1,14 +1,20 @@
 const Comments = require('../models/comments');
 
-function changeCommentVote(req, res, next) {
-  console.log('changeCommentVote called')
+const { checkDeleteCommentError } = require('./helpers');
 
-  const commentId = req.params.comment_id
+// =============================================
+
+function changeCommentVote(req, res, next) {
+
+  const commentId = req.params.comment_id;
+  const voteDirection = req.query.vote;
   let modifier;
+
+  let errorCheck = checkVotesError(commentId, req.query);
+  if (errorCheck !== undefined) return next(errorCheck)
 
   if (req.query.vote === 'up') modifier = 1;
   else if (req.query.vote === 'down') modifier = -1;
-  // else // create an error to pass to error handling middleware once written
 
   return Comments.findByIdAndUpdate(commentId, { $inc: { votes: modifier } }, { new: true })
     .then(updatedCommentVotes => {
@@ -18,21 +24,21 @@ function changeCommentVote(req, res, next) {
 }
 
 function deleteUserComment(req, res, next) {
-  console.log('deleteUserComment called')
 
   const commentId = req.params.comment_id;
+  
   Comments.findById(commentId).lean()
     .then(comment => {
-      if (comment.created_by === 'northcoder') {
-        Comments.findByIdAndRemove(commentId)
-          .then(deletedComment => {
-            res.status(204) // No content - successfully processed but no return content
-          })
-          .catch(next)
-      }
-      else console.log('other author') // create an invalid user to delete comment
-    })
 
+      let deleteErrorCheck = checkDeleteCommentError(comment, 'northcoder', commentId);
+      if (deleteErrorCheck !== undefined) return next(deleteErrorCheck);
+
+      Comments.findByIdAndRemove(commentId)
+        .then(deletedComment => {
+          res.status(204) // No content - successfully processed but no return content
+        })
+        .catch(next)
+    })
 }
 
 module.exports = { changeCommentVote, deleteUserComment }
