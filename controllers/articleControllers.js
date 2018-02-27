@@ -16,7 +16,7 @@ function getAllArticles(req, res, next) {
       articlesArray = articles;
       const commentCount = articles.map(article => {
         return Comments.find({ belongs_to: article._id }).count();
-      })
+      });
 
       return Promise.all(commentCount)
         .then(commentsLength => {
@@ -24,7 +24,7 @@ function getAllArticles(req, res, next) {
             article.comments = commentsLength[i];
             return article;
           });
-        })
+        });
 
     })
     .then(articles => {
@@ -61,7 +61,7 @@ function getArticleComments(req, res, next) {
 
       res.status(200).json({ comments: commentsForArticle })
     })
-    .catch(next)
+    .catch(next);
 
 }
 
@@ -115,4 +115,10 @@ function changeArticleVote(req, res, next) {
     
 }
 
-module.exports = { getAllArticles, getArticleComments, postNewArticleComment, changeArticleVote }
+module.exports = { 
+  getAllArticles,
+  getSingleArticle, 
+  getArticleComments, 
+  postNewArticleComment, 
+  changeArticleVote 
+};
