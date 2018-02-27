@@ -7,7 +7,7 @@ function getAllTopics(req, res, next) {
     .then(allTopics => {
       res.status(200).json({ topics: allTopics });
     })
-    .catch(next)
+    .catch(next);
 
 }
 
@@ -19,9 +19,9 @@ function getArticlesByTopic(req, res, next) {
     .then(articlesByTopic => {
       if (articlesByTopic.length < 1) return next({ name: 'invalidTopic', value: topicToSearchFor });
       
-      res.status(200).json({ articles: articlesByTopic})
+      res.status(200).json({ articles: articlesByTopic});
     })
-    .catch(next)
+    .catch(next);
 }
 
-module.exports = { getAllTopics, getArticlesByTopic }
+module.exports = { getAllTopics, getArticlesByTopic };

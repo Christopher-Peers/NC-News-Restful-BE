@@ -1,6 +1,6 @@
 const Comments = require('../models/comments');
 
-const { checkDeleteCommentError } = require('./helpers');
+const { checkDeleteCommentError, checkVotesError } = require('./helpers');
 
 // =============================================
 
@@ -11,16 +11,16 @@ function changeCommentVote(req, res, next) {
   let modifier;
 
   let errorCheck = checkVotesError(commentId, req.query);
-  if (errorCheck !== undefined) return next(errorCheck)
+  if (errorCheck !== undefined) return next(errorCheck);
 
-  if (req.query.vote === 'up') modifier = 1;
-  else if (req.query.vote === 'down') modifier = -1;
+  if (voteDirection === 'up') modifier = 1;
+  else if (voteDirection === 'down') modifier = -1;
 
   return Comments.findByIdAndUpdate(commentId, { $inc: { votes: modifier } }, { new: true })
     .then(updatedCommentVotes => {
-      res.status(200).json(updatedCommentVotes) // better status code?
+      res.status(200).json(updatedCommentVotes); // better status code?
     })
-    .catch(next)
+    .catch(next);
 }
 
 function deleteUserComment(req, res, next) {
@@ -35,10 +35,10 @@ function deleteUserComment(req, res, next) {
 
       Comments.findByIdAndRemove(commentId)
         .then(deletedComment => {
-          res.status(204) // No content - successfully processed but no return content
+          res.status(204); // No content - successfully processed but no return content
         })
-        .catch(next)
-    })
+        .catch(next);
+    });
 }
 
-module.exports = { changeCommentVote, deleteUserComment }
+module.exports = { changeCommentVote, deleteUserComment };

@@ -59,7 +59,6 @@ function getArticleComments(req, res, next) {
       let idErrorCheck =  checkIdError(articleId, commentsForArticle);
       if (idErrorCheck !== undefined) return next(idErrorCheck);
 
-      if (commentsForArticle.length > 1) 
       res.status(200).json({ comments: commentsForArticle })
     })
     .catch(next)
@@ -68,9 +67,11 @@ function getArticleComments(req, res, next) {
 
 function postNewArticleComment(req, res, next) {
 
+  const articleId = req.params.article_id; 
+
   const newComment = new Comments({
     body: req.body.comment,
-    belongs_to: req.params.article_id,
+    belongs_to: articleId,
     created_by: 'northcoder', // hardcoded fix this to accept a user
     votes: 0,
     created_at: Date.now()
@@ -81,7 +82,10 @@ function postNewArticleComment(req, res, next) {
 
   return newComment.save()
     .then(newComment => {
-      console.log(newComment) // check this works with id 
+
+      let idErrorCheck =  checkIdError(articleId, newComment);
+      if (idErrorCheck !== undefined) return next(idErrorCheck);
+
       res.status(201).json(newComment) 
     })
     .catch(next);
@@ -107,9 +111,8 @@ function changeArticleVote(req, res, next) {
       
       res.status(200).json(updatedArticleVotes) // better status code?
     })
-    .catch(err => console.log(err))
+    .catch(next);
     
-
 }
 
 module.exports = { getAllArticles, getArticleComments, postNewArticleComment, changeArticleVote }
