@@ -33,6 +33,16 @@ function getAllArticles(req, res, next) {
     .catch(next);
 }
 
+function getSingleArticle(req, res, next) {
+
+  const articleId = req.params.article_id;
+
+  return Articles.findById(articleId).lean()
+    .then(article => res.status(200).json({articles: article}))
+    .catch(next);
+
+}
+
 function getArticleComments(req, res, next) {
 
   const articleId = req.params.article_id;
