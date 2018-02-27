@@ -38,7 +38,13 @@ function getSingleArticle(req, res, next) {
   const articleId = req.params.article_id;
 
   return Articles.findById(articleId).lean()
-    .then(article => res.status(200).json({articles: article}))
+    .then(article => {
+
+      let idErrorCheck =  checkIdError(articleId, article);
+      if (idErrorCheck !== undefined) return next(idErrorCheck);
+
+      res.status(200).json({articles: article})
+    })
     .catch(next);
 
 }
@@ -49,7 +55,6 @@ function getArticleComments(req, res, next) {
 
   return Comments.find({ belongs_to: articleId }).lean()
     .then(commentsForArticle => {
-      console.log(commentsForArticle)
 
       let idErrorCheck =  checkIdError(articleId, commentsForArticle);
       if (idErrorCheck !== undefined) return next(idErrorCheck);
@@ -75,7 +80,10 @@ function postNewArticleComment(req, res, next) {
   if (postErrorCheck !== undefined) return next(postErrorCheck)
 
   return newComment.save()
-    .then(newComment => { res.status(201).json(newComment) })
+    .then(newComment => {
+      console.log(newComment) // check this works with id 
+      res.status(201).json(newComment) 
+    })
     .catch(next);
 }
 

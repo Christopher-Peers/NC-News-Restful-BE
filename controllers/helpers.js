@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 checkIdError = (id, mongoSearch) => {
-  // console.log(mongoSearch)
   
   if (!mongoose.Types.ObjectId.isValid(id)) return { name: 'invalidId', value: id };
   if (mongoSearch === null || mongoSearch.length === 0) return { name: 'castError', value: id }
