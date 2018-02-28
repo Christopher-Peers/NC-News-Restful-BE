@@ -43,7 +43,7 @@ function getSingleArticle(req, res, next) {
       let idErrorCheck =  checkIdError(articleId, article);
       if (idErrorCheck !== undefined) return next(idErrorCheck);
 
-      res.status(200).json({articles: article})
+      res.status(200).json({ articles: [article] });
     })
     .catch(next);
 
@@ -86,7 +86,7 @@ function postNewArticleComment(req, res, next) {
       let idErrorCheck =  checkIdError(articleId, newComment);
       if (idErrorCheck !== undefined) return next(idErrorCheck);
 
-      res.status(201).json(newComment) 
+      res.status(201).json({ comment : newComment }); 
     })
     .catch(next);
 }
@@ -109,7 +109,7 @@ function changeArticleVote(req, res, next) {
       let idErrorCheck = checkIdError(articleId, updatedArticleVotes);
       if (idErrorCheck !== undefined) return next(idErrorCheck);
       
-      res.status(200).json(updatedArticleVotes) // better status code?
+      res.status(202).json(updatedArticleVotes);
     })
     .catch(next);
     

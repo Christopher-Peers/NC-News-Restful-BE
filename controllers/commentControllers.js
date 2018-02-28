@@ -10,7 +10,7 @@ function changeCommentVote(req, res, next) {
   const voteDirection = req.query.vote;
   let modifier;
 
-  let errorCheck = checkVotesError(commentId, req.query);
+  let errorCheck = checkVotesError(req.query);
   if (errorCheck !== undefined) return next(errorCheck);
 
   if (voteDirection === 'up') modifier = 1;
@@ -18,7 +18,7 @@ function changeCommentVote(req, res, next) {
 
   return Comments.findByIdAndUpdate(commentId, { $inc: { votes: modifier } }, { new: true })
     .then(updatedCommentVotes => {
-      res.status(200).json(updatedCommentVotes); // better status code?
+      res.status(202).json(updatedCommentVotes); 
     })
     .catch(next);
 }
@@ -35,10 +35,11 @@ function deleteUserComment(req, res, next) {
 
       Comments.findByIdAndRemove(commentId)
         .then(deletedComment => {
-          res.status(204); // No content - successfully processed but no return content
+          res.status(202).json({message: `comment with the id ${commentId} has been deleted`}); // No content - successfully processed but no return content
         })
         .catch(next);
-    });
+    })
+    .catch(next);
 }
 
 module.exports = { changeCommentVote, deleteUserComment };

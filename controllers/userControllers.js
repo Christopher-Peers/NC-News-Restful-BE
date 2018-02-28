@@ -14,7 +14,7 @@ function getUser(req, res, next) {
   const userHandle = req.params.username;
   return Users.findOne({username: userHandle}).lean()
     .then(singleUser => {
-      res.status(200).json({users: singleUser});
+      res.status(200).json({users: [singleUser]});
     })
     .catch(next);
 

@@ -7,6 +7,7 @@ if (process.env.NODE_ENV !== 'production') {
 else {
   var db = process.env.DB;
 }
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -42,6 +43,9 @@ app.use((err, req, res, next) => {
     break;
   case 'invalidQuery':
     res.status(400).send({ message: `The query string '${err.value}' is not valid please use the keyword 'vote'.` });
+    break;
+  case 'invalidUser':
+    res.status(400).send({ message: `The user '${err.value}' may not delete a comment not created by them.` });
     break;
   case 'invalidTopic':
     res.status(404).send({ message: `The topic '${err.value}' does not exist in the database.` });
