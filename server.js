@@ -1,12 +1,19 @@
 if (!process.env.NODE_ENV) process.env.NODE_ENV = 'dev';
 
+if (process.env.NODE_ENV !== 'production') {
+  const config = require('./config');
+  var db = config.DB[process.env.NODE_ENV] || process.env.DB;
+}
+else {
+  var db = process.env.DB;
+}
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
-const config = require('./config');
+
 const apiRouter = require('./routes/apiRouter');
-const db = config.DB[process.env.NODE_ENV] || process.env.DB;
+
 mongoose.Promise = Promise;
 
 mongoose.connect(db, { useMongoClient: true })

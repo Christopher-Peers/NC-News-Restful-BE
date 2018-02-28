@@ -75,7 +75,7 @@ function postNewArticleComment(req, res, next) {
     created_by: 'northcoder', // hardcoded fix this to accept a user
     votes: 0,
     created_at: Date.now()
-  })
+  });
 
   let postErrorCheck = checkPostCommentError(newComment); // still hardcoded for now
   if (postErrorCheck !== undefined) return next(postErrorCheck)
