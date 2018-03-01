@@ -23,7 +23,7 @@ describe('northcoders news back end', () => {
   });
 
   describe('"GET" /api/topics', () => {
-    it('returns an array of all topics in the databaseand a 200 status', () => {
+    it('returns an array of all topics in the database and a 200 status', () => {
       return request
         .get('/api/topics')
         .expect(200)

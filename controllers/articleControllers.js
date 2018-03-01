@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Articles = require('../models/articles');
 const Comments = require('../models/comments');
 
-const { checkVotesError, checkPostCommentError, checkIdError } = require('./helpers'); 
+const { checkVotesError, checkPostCommentError, checkIdError } = require('./helpers');
 
 // =========================================================
 
@@ -36,11 +36,12 @@ function getAllArticles(req, res, next) {
 function getSingleArticle(req, res, next) {
 
   const articleId = req.params.article_id;
+  if (!mongoose.Types.ObjectId.isValid(articleId)) return next({ name: 'invalidId', value: articleId });
 
   return Articles.findById(articleId).lean()
     .then(article => {
 
-      let idErrorCheck =  checkIdError(articleId, article);
+      let idErrorCheck = checkIdError(articleId, article);
       if (idErrorCheck !== undefined) return next(idErrorCheck);
 
       res.status(200).json({ articles: [article] });
@@ -52,14 +53,15 @@ function getSingleArticle(req, res, next) {
 function getArticleComments(req, res, next) {
 
   const articleId = req.params.article_id;
+  if (!mongoose.Types.ObjectId.isValid(articleId)) return next({ name: 'invalidId', value: articleId });
 
   return Comments.find({ belongs_to: articleId }).lean()
     .then(commentsForArticle => {
 
-      let idErrorCheck =  checkIdError(articleId, commentsForArticle);
+      let idErrorCheck = checkIdError(articleId, commentsForArticle);
       if (idErrorCheck !== undefined) return next(idErrorCheck);
 
-      res.status(200).json({ comments: commentsForArticle })
+      res.status(200).json({ comments: commentsForArticle });
     })
     .catch(next);
 
@@ -67,7 +69,8 @@ function getArticleComments(req, res, next) {
 
 function postNewArticleComment(req, res, next) {
 
-  const articleId = req.params.article_id; 
+  const articleId = req.params.article_id;
+  if (!mongoose.Types.ObjectId.isValid(articleId)) return next({ name: 'invalidId', value: articleId });
 
   const newComment = new Comments({
     body: req.body.comment,
@@ -78,17 +81,27 @@ function postNewArticleComment(req, res, next) {
   });
 
   let postErrorCheck = checkPostCommentError(newComment); // still hardcoded for now
-  if (postErrorCheck !== undefined) return next(postErrorCheck)
+  if (postErrorCheck !== undefined) return next(postErrorCheck);
 
-  return newComment.save()
-    .then(newComment => {
+  return Articles.findById(articleId).lean()
+    .then(article => {
 
-      let idErrorCheck =  checkIdError(articleId, newComment);
+      let idErrorCheck = checkIdError(articleId, article);
       if (idErrorCheck !== undefined) return next(idErrorCheck);
 
-      res.status(201).json({ comment : newComment }); 
+      return newComment.save()
+        .then(newComment => {
+
+          let idErrorCheck = checkIdError(articleId, newComment);
+          if (idErrorCheck !== undefined) return next(idErrorCheck);
+
+          res.status(201).json({ comment: newComment });
+        })
+        .catch(next);
+
     })
     .catch(next);
+
 }
 
 function changeArticleVote(req, res, next) {
@@ -96,6 +109,7 @@ function changeArticleVote(req, res, next) {
   const articleId = req.params.article_id;
   const voteDirection = req.query.vote;
   let modifier;
+  if (!mongoose.Types.ObjectId.isValid(articleId)) return next({ name: 'invalidId', value: articleId });
 
   let voteErrorCheck = checkVotesError(req.query);
   if (voteErrorCheck !== undefined) return next(voteErrorCheck);
@@ -108,17 +122,17 @@ function changeArticleVote(req, res, next) {
 
       let idErrorCheck = checkIdError(articleId, updatedArticleVotes);
       if (idErrorCheck !== undefined) return next(idErrorCheck);
-      
+
       res.status(202).json(updatedArticleVotes);
     })
     .catch(next);
-    
+
 }
 
-module.exports = { 
+module.exports = {
   getAllArticles,
-  getSingleArticle, 
-  getArticleComments, 
-  postNewArticleComment, 
-  changeArticleVote 
+  getSingleArticle,
+  getArticleComments,
+  postNewArticleComment,
+  changeArticleVote
 };
