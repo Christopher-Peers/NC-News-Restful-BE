@@ -8,16 +8,20 @@ const mongoose = require('mongoose');
 describe('northcoders news back end', () => {
   let docs = {};
   beforeEach(function () {
-    return mongoose.connection.dropDatabase()
-      .then(() => {
-        return seed();
-      })
-      .then(data => {
-        docs = data;
-        return docs;
-      });
+    if (mongoose.connection.readyState === 1) {
+      return mongoose.connection.dropDatabase()
+        .then(() => {
+          return seed();
+        })
+        .then(data => {
+          docs = data;
+          return docs;
+        });
+    }
+    else {
+      mongoose.connect(seed);
+    }
   });
-
   after(() => {
     mongoose.disconnect();
   });
@@ -85,7 +89,7 @@ describe('northcoders news back end', () => {
   describe('"PUT" /api/comments/:comment_id', () => {
     it('alters the vote up for corresponding :comment_id paramameter and receives a 202 status.', () => {
       const comment_id = docs.comments[0]._id.toString();
-      
+
       return request
         .put(`/api/comments/${comment_id}?vote=up`)
         .expect(202)
@@ -107,7 +111,7 @@ describe('northcoders news back end', () => {
   describe('"DELETE" /api/comments/:comment_id', () => {
     it('deletes the comment corresponding to the :comment_id parameter if created by "northcoder".', () => {
       const comment_id = docs.comments[0]._id.toString();
-      
+
       return request
         .delete(`/api/comments/${comment_id}`)
         .expect(202)
@@ -138,7 +142,7 @@ describe('northcoders news back end', () => {
         .expect(200)
         .then(res => {
           expect(res.body.comments).to.be.an('array');
-          expect(res.body.comments.length).to.equal(2);
+          expect(res.body.comments.length).to.equal(3);
           expect(res.body.comments[0].body).to.equal('this is a comment');
           expect(res.body.comments[0].belongs_to).to.equal(article_id);
         });
@@ -148,7 +152,7 @@ describe('northcoders news back end', () => {
   describe('"POST" /api/articles/:article_id/comments', () => {
     it('posts a comment for the specified :article_id parameter and gets a 201 status.', () => {
       const article_id = docs.articles[0]._id.toString();
-      const testComment = { "comment" : "test comment" };
+      const testComment = { "comment": "test comment" };
 
       return request
         .post(`/api/articles/${article_id}/comments`)
@@ -164,13 +168,13 @@ describe('northcoders news back end', () => {
 
   describe('"GET" /api/users/:username', () => {
     it('returns the specified user corresponding to the :username paramater and gets a 200 status.', () => {
-      
+
       return request
         .get('/api/users/northcoder')
         .expect(200)
         .then(res => {
           expect(res.body.users[0].username).to.equal('northcoder');
-          expect(res.body.users.length).to.equal(1);          
+          expect(res.body.users.length).to.equal(1);
         });
     });
   });

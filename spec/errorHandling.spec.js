@@ -5,22 +5,27 @@ const { expect } = require('chai');
 const request = require('supertest')(app);
 const mongoose = require('mongoose');
 
-describe.only('northcoders news error handling', () => {
+describe('northcoders news error handling', () => {
   let docs = {};
   beforeEach(function () {
-    return mongoose.connection.dropDatabase()
-      .then(() => {
-        return seed();
-      })
-      .then(data => {
-        docs = data;
-        return docs;
-      });
+    if (mongoose.connection.readyState === 1) {
+      return mongoose.connection.dropDatabase()
+        .then(() => {
+          return seed();
+        })
+        .then(data => {
+          docs = data;
+          return docs;
+        });
+    }
+    else {
+      mongoose.connect(seed);
+    }
   });
-
   after(() => {
     mongoose.disconnect();
   });
+
 
   // invalid url checks
   describe('invalid url checks', () => {
@@ -64,7 +69,7 @@ describe.only('northcoders news error handling', () => {
           });
       });
     });
-  
+
     describe('"PUT" /api/articles/:article_id?vote=up', () => {
       it('invalid mongo ID for :article_id parameter returns 400 status code', () => {
         return request
@@ -83,9 +88,9 @@ describe.only('northcoders news error handling', () => {
           });
       });
     });
-  
+
     describe('"POST" /api/articles/:articles_id/comments', () => {
-      const testComment = { "comment" : "test comment" };
+      const testComment = { "comment": "test comment" };
       it('invalid mongo ID for :articles_id parameter returns 400 status code', () => {
         return request
           .post('/api/articles/iLoveSoup/comments')
@@ -105,7 +110,7 @@ describe.only('northcoders news error handling', () => {
           });
       });
     });
-  
+
     describe('"GET" /api/articles/:article_id/comments', () => {
       it('invalid mongo ID for :article_id parameter returns 400 status code', () => {
         return request
@@ -124,7 +129,7 @@ describe.only('northcoders news error handling', () => {
           });
       });
     });
-  
+
     describe('"PUT" /api/comments/:comment_id?vote=up', () => {
       it('invalid mongo ID for :comment_id parameter returns 400 status code', () => {
         return request
@@ -143,7 +148,7 @@ describe.only('northcoders news error handling', () => {
           });
       });
     });
-  
+
     describe('"DELETE" /api/comments/:comment_id', () => {
       it('invalid mongo ID for :comment_id parameter returns 400 status code', () => {
         return request
@@ -193,7 +198,7 @@ describe.only('northcoders news error handling', () => {
   describe('post comments error checks', () => {
     describe('"POST" /api/articles/:articles_id/comments', () => {
       it('empty comment body returns a 400 status and an error message.', () => {
-        const testComment = { "comment" : "" };
+        const testComment = { "comment": "" };
         const article_id = docs.articles[0]._id.toString();
         return request
           .post(`/api/articles/${article_id}/comments`)
@@ -204,7 +209,7 @@ describe.only('northcoders news error handling', () => {
           });
       });
       it('incorrect key value on the body will return a 400 status and an error message', () => {
-        const testComment = { "somestuff" : "i have an invlaid key value" };
+        const testComment = { "somestuff": "i have an invlaid key value" };
         const article_id = docs.articles[0]._id.toString();
         return request
           .post(`/api/articles/${article_id}/comments`)
@@ -239,5 +244,5 @@ describe.only('northcoders news error handling', () => {
       });
     });
   });
-  
+
 });

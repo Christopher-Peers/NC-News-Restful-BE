@@ -4,7 +4,7 @@
   "description": "### Background",
   "main": "config.js",
   "scripts": {
-    "test": "mocha spec",
+    "test": "mocha ./spec/*.spec.js",
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
