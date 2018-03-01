@@ -6,5 +6,7 @@ Welcome to Northcoders News a reddit style web app to showcase what I have learn
 #### Check your dependecies
 
 You will need to have npm installed to check use this command.
-'''npm -v'''
+'''
+npm -v
+'''
 If it is not installed you will need to follow the instructions here https://nodejs.org/en/download/package-manager/
