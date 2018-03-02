@@ -1,7 +1,7 @@
 ## Northcoders News BE 
 ### About
 
-Welcome to Northcoders News a reddit style web app to showcase what I have learned so far. This app was built with Node v8.9.1, Express v4.14.0, MongoDB v3.6.2 and Mongoose v4.7.0. The app may work with both higher or lower versions of the mentioned software but as it has not been tested it can not be guaranteed to not have issues. If you wish to go straight to a deployed version goto https://cpeers-nc-news/api
+Welcome to Northcoders News a reddit style web app to showcase what I have learned so far. This app was built with Node v8.9.1, Express v4.14.0, MongoDB v3.6.2 and Mongoose v4.7.0. The app may work with both higher or lower versions of the mentioned software but as it has not been tested it can not be guaranteed to not have issues. If you wish to go straight to a deployed version goto https://cpeers-nc-news.herokuapp.com/
 
 ### Check your dependecies
 
@@ -47,4 +47,4 @@ To test the server please run ```npm test``` this will test all the endpoints an
 
 ### Endpoints
 
-The enpoints are listed when navigating to ```https://localhost:3000/```
+The enpoints are listed when navigating to ```http://localhost:3000/```

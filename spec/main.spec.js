@@ -4,6 +4,7 @@ const app = require('../server');
 const { expect } = require('chai');
 const request = require('supertest')(app);
 const mongoose = require('mongoose');
+const DB_URI = require('../config').DB.test;
 
 describe('northcoders news back end', () => {
   let docs = {};
@@ -19,7 +20,7 @@ describe('northcoders news back end', () => {
         });
     }
     else {
-      mongoose.connect(seed);
+      mongoose.connect(DB_URI);
     }
   });
   after(() => {
