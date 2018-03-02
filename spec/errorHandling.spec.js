@@ -4,7 +4,7 @@ const app = require('../server');
 const { expect } = require('chai');
 const request = require('supertest')(app);
 const mongoose = require('mongoose');
-const DB_URI = require('../config').DB.test;
+const DB_URI = require('../config').DB.test; 
 
 describe('northcoders news error handling', () => {
   let docs = {};
