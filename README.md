@@ -47,4 +47,4 @@ To test the server please run ```npm test``` this will test all the endpoints an
 
 ### Endpoints
 
-The enpoints are listed when navigating to ```https://localhost:3000/api```
+The enpoints are listed when navigating to ```https://localhost:3000/```

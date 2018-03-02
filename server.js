@@ -12,6 +12,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
+const cors = require('cors');
 
 const apiRouter = require('./routes/apiRouter');
 
@@ -22,6 +23,7 @@ mongoose.connect(db, { useMongoClient: true })
   .catch(err => console.log('connection failed', err));
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use(express.static('public'));
 app.use('/api', apiRouter);
