@@ -20,7 +20,7 @@ describe('northcoders news error handling', () => {
         });
     }
     else {
-      mongoose.connect(DB_URI);
+      mongoose.connect(DB_URI, { useMongoClient: true });
     }
   });
   after(() => {
@@ -31,7 +31,7 @@ describe('northcoders news error handling', () => {
   // invalid url checks
   describe('invalid url checks', () => {
     describe('"GET" non existant url paths.', () => {
-      it('returns a 404 for the path /bannan should start with /api', () => {
+      it('returns a 404 for the path /bannana should start with /api', () => {
         return request
           .get('/bannana')
           .expect(404)

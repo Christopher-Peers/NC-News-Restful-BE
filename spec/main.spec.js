@@ -20,7 +20,7 @@ describe('northcoders news back end', () => {
         });
     }
     else {
-      mongoose.connect(DB_URI);
+      mongoose.connect(DB_URI, { useMongoClient: true });
     }
   });
   after(() => {
