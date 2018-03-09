@@ -39,7 +39,7 @@ After the database has been seeded you can run:
 
 ```npm start```
 
-This will create a local instance of this api which can be found by poiting your browser to ```https://localhost:3000/api```
+This will create a local instance of this api which can be found by pointing your browser to ```localhost:3000/```
 
 ### Testing
 
@@ -47,4 +47,4 @@ To test the server please run ```npm test``` this will test all the endpoints an
 
 ### Endpoints
 
-The enpoints are listed when navigating to ```http://localhost:3000/```
+The endpoints are listed when navigating to ```localhost:3000/```
