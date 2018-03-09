@@ -27,8 +27,6 @@ describe('northcoders news error handling', () => {
     mongoose.disconnect();
   });
 
-
-  // invalid url checks
   describe('invalid url checks', () => {
     describe('"GET" non existant url paths.', () => {
       it('returns a 404 for the path /bannana should start with /api', () => {
@@ -50,7 +48,6 @@ describe('northcoders news error handling', () => {
     });
   });
 
-  // invalid ID checks
   describe('all the ID checks', () => {
     describe('"GET" /api/articles/:article_id', () => {
       it('invalid mongo ID for :article_id parameter returns 400 status code', () => {
@@ -159,19 +156,9 @@ describe('northcoders news error handling', () => {
             expect(res.body.message).to.equal('The ID "whereDidTheOctopusGo" is not a valid mongoose object ID');
           });
       });
-      // it('valid :comment_id format, but that is not in the database returns a 404', () => {
-      //   return request
-      //     .delete('/api/comments/4b3b9cdb22bfea24f4124c7a')
-      //     .expect(404)
-      //     .then(res => {
-      //       expect(res.body.message).to.equal('The ID "4b3b9cdb22bfea24f4124c7a" does not exist in the database.');
-      //     });
-      // });
-      // *** Handled seperately in the delete helper ***
     });
   });
 
-  // votes error checking
   describe('votes error checking', () => {
     describe('"PUT" /api/articles/:article_id?vote=up', () => {
       it('if the query is not spelt "vote" return 400 status and error message.', () => {
@@ -195,7 +182,6 @@ describe('northcoders news error handling', () => {
     });
   });
 
-  // post comments error checks
   describe('post comments error checks', () => {
     describe('"POST" /api/articles/:articles_id/comments', () => {
       it('empty comment body returns a 400 status and an error message.', () => {
@@ -210,7 +196,7 @@ describe('northcoders news error handling', () => {
           });
       });
       it('incorrect key value on the body will return a 400 status and an error message', () => {
-        const testComment = { "somestuff": "i have an invlaid key value" };
+        const testComment = { "somestuff": "i have an invalid key value" };
         const article_id = docs.articles[0]._id.toString();
         return request
           .post(`/api/articles/${article_id}/comments`)
@@ -223,7 +209,6 @@ describe('northcoders news error handling', () => {
     });
   });
 
-  // delete comments error checking
   describe('delete comments error checks', () => {
     describe('"DELETE" /api/comments/:comment_id', () => {
       it('if user tries to delete a comment not posted by them return 400 status and an error message.', () => {
